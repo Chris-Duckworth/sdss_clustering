@@ -4,6 +4,8 @@ Clustering of Sloan Digitial Sky Survey (SDSS) galaxy images (RGB) using transfe
 
 ## Data
 
+SDSS images are downloaded from the sciserver database.
+
 ### Pre-Processing
 
 
