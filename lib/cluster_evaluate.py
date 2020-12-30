@@ -27,3 +27,4 @@ def plot_cluster(images, row_len=10):
     
     fig.subplots_adjust(wspace=0, hspace=0.05)
     return fig, ax
+    
