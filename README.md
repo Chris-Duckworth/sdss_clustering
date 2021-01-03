@@ -1,6 +1,10 @@
 # sdss_clustering
 
-Clustering of Sloan Digitial Sky Survey (SDSS) galaxy images (RGB) using transfer (from pre-trained convolutional neural networks) learning, and/or principal component analysis, and, hierarchical (agglomerative) clustering.
+Clustering of Sloan Digitial Sky Survey (SDSS) galaxy images (RGB) using transfer learning (from pre-trained convolutional neural networks), and/or principal component analysis, and, hierarchical (agglomerative) clustering.
+
+- Here, we create representations of galaxy images through use of the output from a convolutional neural network (CNN). 
+- The output features (i.e. layer of output nodes) are then compressed by principal component analysis. 
+- These _super_-features are then used as the parameter space to cluster together the images 
 
 ## Data
 
@@ -11,7 +15,24 @@ Galaxy images are pulled from the SDSS database on [sciserver](https://www.scise
 ### Pre-processing
 For input into the CNN, we downsample all galaxy images to be size (80, 80, 3) (to avoid fitting noise), and, normalised so pixel values (in each channel) range [0, 1]. We have 6437 galaxies with SDSS images.
 
+## CNN
+
+Here we use a pre-trained convolutional neural network (CNN) in order to extract distinct features for the set of SDSS images. The structure and training of the CNN is described in this [repo](https://github.com/Chris-Duckworth/sdss_CNN). The CNN structure can be summarised by this schematic : 
+![schematic](./transfer_learning/cnn_schematic.png)
+
+In order to repurpose this network for the aim of clustering (rather than its original purpose of regression), we remove the output layer (i.e. single node with linear activation), along with a variable number of hidden fully connected layers. We consider 1D (i.e. flattened) output directly from the final convolutional block, and, after the penultimate hidden layer corresponding to 37632 and 128 output _features_ respectively.
+
 ## Principal Component Analysis 
+
+While these feature sets represent a host of different characteristics about the galaxy images, there are currently too higher dimension (at least for the 37632 output) to use as a parameter space for clustering. To effectively compress information (and hence reduce the number of dimensions), principal component analysis (PCA) is applied to the CNN output. PCA works by fitting a series of n _principle components_ (i.e. set of orthogonal lines that can be defined as the directions that maximise the variance in the data [within the original parameter space]). PCA effectively identifies correlated dimensions, reducing the required number of parameters required to represent the data, while retaining maximal variance encapsulated by the original information. Our final feature sets (i.e. used for clustering can be summarised by the following table : 
+
+| CNN n<sub>features</sub> | PCA n<sub>features</sub> | Original variance | Label |
+| ------------- | ------------- | ------------- | ------------- |
+| 37632 | 100 | 94.36% | `CNN-37632_PCA-100`|
+| 128 | 20 | 99.86% | `CNN-128_PCA-20` |
+
+## Clustering
+
 
 As a baseline test of image similarity clustering, we first consider all pixel values (in each of the 3 colour channels) as distinct features (i.e. dimensions in the parameter space).
 Since we are working with images of size (80, 80, 3), this corresponds to 19200 dimensions which is difficult to cluster directly. 
@@ -19,16 +40,6 @@ To compress information we apply a principal component analysis (pca) which tran
 This equates to find dimensions that have maximal variance along them, hence compressing information while retaining a significant fraction of variance in the data.
 Here, this can be thought of finding pixels that are highly correlated and linking them.
 
-## CNN
-
-Here we use a pre-trained convolutional neural network (CNN) in order to extract distinct features for the set of SDSS images. The structure and training of the CNN is described in this [repo](https://github.com/Chris-Duckworth/sdss_CNN).
-In order to repurpose this network for the aim of clustering, we remove the final 4 `keras` defined layers (i.e. layers of fully connected nodes with dropout).
-We now take the output from the flattened fully connect layer with 128 nodes, as a representation of our images. 
-
-We find that a significant number of these nodes are practically redundant (i.e.) highly correlated, and hence, we can again compress information using pca. Here, we select only 20 compressed features from the CNN to represent the galaxy images. 
-This PCA encapsulates 99.86% of the variance in the output features from the CNN.
-
-## Clustering
 
 ### K-means
 
