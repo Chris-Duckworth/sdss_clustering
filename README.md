@@ -35,13 +35,20 @@ In the following, we will consider clustering applied to `CNN-37632_PCA-100`, ho
 
 <img src="/transfer_learning/pca_variance_plots/pca_feature_variance-37632-100.png" width="450" height="300">
 
-## Clustering
+## Clustering 
 
-### K-means
+To cluster galaxy images, three distinct clustering algorithms (from [`sklearn.cluster`](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.cluster)) are applied to the output set of image features. We select :
+  - **k-means :** (i.e. generating a target number of distinct clusters that minimise within cluster variances)
+  - **Affinity propagation :** which finds 'exemplars' (i.e. prime examples for a representative group) through sending 'messages' between each of the samples. Here you define groups (or their exemplars) to minimise a certain metric (e.g. average distance between samples in the parameter space or variance).
+  - **Agglomerative :** hierarchical bottom-up clustering (i.e. iteratively merging together the nearest nodes - starting with individual galaxies until desired number of clusters are found)
 
-### Affinity Propagation
+A quick summary of their implementation (with jupyter notebook) can be found here : 
 
-### Agglomerative
+| Algorithm | n<sub>clusters</sub> | Notebook | Hyperparameters |
+| ------------- | ------------- | ------------- | ------------- |
+| [k-means](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html#sklearn.cluster.KMeans) | 10 | [`kmeans_CNN_clustering.ipynb`](./transfer_learning/kmeans_CNN_clustering.ipynb) | |
+| [Affinity propagation](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.AffinityPropagation.html#sklearn.cluster.AffinityPropagation) | 176 | [`affinity_propagation_CNN_clustering.ipynb`](./transfer_learning/affinity_propagation_CNN_clustering.ipynb) | **Damping** : 0.8 |
+| [Agglomerative](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.AgglomerativeClustering.html#sklearn.cluster.AgglomerativeClustering) | 32 | [`agglomerative_CNN_clustering.ipynb`](./transfer_learning/agglomerative_CNN_clustering.ipynb) | **Linkage** : 'ward' |
 
 
 ## Baseline comparison
