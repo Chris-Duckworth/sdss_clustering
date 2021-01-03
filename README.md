@@ -67,12 +67,26 @@ Since there is no _correct_ number of galaxy groups (and in many parameterisatio
 
 The clusters here are very precisely defined, and the similarity between the images is obvious. Difficulties reside in that image characteristics irrelevant to the intrinsic galaxy parameters are clearly important in the image clustering (along with structure, shape and colour of the galaxies). Clusters are often matched in position angle (i.e. which way the galaxy is pointing) and size (i.e. how much the galaxy fills the image); which are parameters which we would ideally leave agnostic (at least to some degree) in the clustering (i.e. weighting galaxy structure and colour higher). The made for purpose CNN was trained with significant image augmentation in order to counteract dependencies on position angle and size, so it is unlikely that a another pre-trained network (e.g. xception, vgg16) would yield significantly better results. Despite these potential biases (which bias other parameterisations of galaxy properties), the clustering _is_ successful at picking up features fundamental to the galaxy and demonstrates the viability of pre-trained CNN's uses in grouping galaxies. 
 
-Currently for most purposes, galaxies are divided very coarsely and 176 clusters (with minimal information about how they link together in some form of sequence) is difficult to use. At the most basic level, galaxies are divided into late-type (blue and flattened) and early-type (red and spherical) with a whole host of hierarchical (i.e. sub-catagories) within these very broad definitions. To understand this, agglomerative clustering is also implemented on the sample.
+Currently for most purposes, galaxies are divided very coarsely and 176 clusters (with minimal information about how they link together in some form of sequence) is difficult to use. At the most basic level, galaxies are divided into late-type (blue and flattened) and early-type (red and spherical) with a whole host of hierarchical (i.e. sub-catagories) within these very broad definitions. To understand this, agglomerative clustering is also implemented on the sample. Agglomerative (bottom-up) clustering pro-actively merges the closest clusters (starting with the original samples) in the parameter space until a desired number of (final) clusters is reached. Here is the dendrogram for top 3 levels in the constructed tree, showing the final two clusters (representing late-type and early-type - hopefully) with the corresponding hierarchy (sub-catagories) :
 
+![dendro](./transfer_learning/cluster_plots/agglomerative/CNN-37632_PCA-100/dendrogram-n16.png)
 
-## Baseline comparison
-As a baseline test of image similarity clustering, we consider all pixel values (in each of the 3 colour channels) as distinct features (i.e. dimensions in the parameter space).
-Since we are working with images of size (80, 80, 3), this corresponds to 19200 dimensions which is difficult to cluster directly. 
-To compress information we apply a principal component analysis (pca) which transforms the parameter space, by considering a line orthogonal to the existing parameter dimensions, while minimising the distance of points from this line.
-This equates to find dimensions that have maximal variance along them, hence compressing information while retaining a significant fraction of variance in the data.
-Here, this can be thought of finding pixels that are highly correlated and linking them.
+Random examples for the final two clusters is shown above the final (top level) nodes in the dendrogram, and, original sample count numbers in each cluster are shown for the bottom of the (truncated) dendrogram. Following the current formalism for galaxy morphological [classification](https://en.wikipedia.org/wiki/Galaxy_morphological_classification), it intuitively makes sense to define agglomerative clusters here. 
+
+## Baseline comparison (clustering using PCA only)
+As a baseline test of CNN performance in identifying meaningful features, we also consider whether the image can be clustered directly based on it's pixel values ([`direct_pca_clustering.ipynb`](./pca/direct_pca_clustering.ipynb)).
+  - We now consider pixel values (in each of the 3 colour channels) as distinct features (i.e. dimensions in the parameter space). 
+  - Since we are working with images of size (80, 80, 3), this corresponds to 19200 dimensions which is difficult to cluster directly. 
+  - To compress this information, we apply a PCA to reduce down to 250 dimensions, representing 93.52% of the original variance in the data.
+  - Here, this can be thought of finding pixels that are highly correlated and linking them.
+  - We now apply k-means clustering directly (since 250 is a high dimensional space) to define 10 distinct clusters.
+ 
+Here are 5 random examples from each of the 10 clusters :
+
+![pca_direct](./pca/example_cluster_summary.png)
+
+Even without CNN features, the direct pixel (with PCA compression) approach still yields reasonable clusters. There is some contamination (i.e. blue and red galaxy mixing) however to first order this does a reasonably good job at clustering galaxy images. This appears to be even more dependent on factors such as galaxy size (i.e. fraction the galaxy fills the image), however, represents a good method of identifying images that are mostly noise (cluster 5). 
+
+In summary, pre-trained CNNs appear to bring additional information to the clustering process, however, scale and rotational invariance **must** be a key part of the training process (through image augmentation).
+
+The full set of galaxy images grouped into clusters for each of [`k-means`](./transfer_learning/cluster_plots/kmeans/CNN-37632_PCA-100), [`affinity-propagation`](./transfer_learning/cluster_plots/affinity_propagation/CNN-37632_PCA-100) and [`agglomerative`](./transfer_learning/cluster_plots/agglomerative/CNN-37632_PCA-100) can be found in the [`cluster_plot`](transfer_learning/cluster_plots) directory. Individual image sets of galaxies for each cluster (for each method) is saved in the following format 'cluster\_\*\_of\_\*.pdf'
