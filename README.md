@@ -1,4 +1,4 @@
-![agglo](./transfer_learning/cluster_plots/agglomerative/CNN-37632_PCA-100/dendrogram-n16.png)
+![summary](./transfer_learning/cluster_plots/affinity_propagation/CNN-37632_PCA-100/example_cluster_summary.png)
 
 # sdss_clustering
 
@@ -60,6 +60,15 @@ Galaxy morphology (i.e. how a galaxy appears in an image), is correlated (to som
 where λ<sub>R</sub> [introduced here](https://arxiv.org/abs/astro-ph/0703531) is a measure of _spin_ for a galaxy, by computing the light weighted average of ordered rotation divided by dispersion (random motion). Ellipticity is a measure of projected shape where ε = 1 - b/a (with a and b being the major and minor axes respectively). For each cluster (i.e. colour), the median value of the group is shown by the star, surrounded by a line enclosing 50% of the distribution. Individual points are shown by faint circles of the same colour. Corresponding image examples for each of the clusters are shown in the panel above the scatter plot.
 
 We can see that general the clusters defined here are reasonably compact within the parameter space. Given that galaxy spin/shape are not exactly correlated with morphology, this represents that the image clustering is returning reasonable results.
+
+Since there is no _correct_ number of galaxy groups (and in many parameterisations galaxy can be seen to form a continous sequence), we now turn to affinity propagation to automatically determine the number of clusters. Affinity propagations returns 176 unique clusters for the 6437 galaxy images, representing their diverse nature. Despite this, the visual similarity between unique clusters here is **striking**. Here are 5 examples from 10 clusters picked at random :
+
+![summary](./transfer_learning/cluster_plots/affinity_propagation/CNN-37632_PCA-100/example_cluster_summary.png)
+
+The clusters here are very precisely defined, and the similarity between the images is obvious. Difficulties reside in that image characteristics irrelevant to the intrinsic galaxy parameters are clearly important in the image clustering (along with structure, shape and colour of the galaxies). Clusters are often matched in position angle (i.e. which way the galaxy is pointing) and size (i.e. how much the galaxy fills the image); which are parameters which we would ideally leave agnostic (at least to some degree) in the clustering (i.e. weighting galaxy structure and colour higher). The made for purpose CNN was trained with significant image augmentation in order to counteract dependencies on position angle and size, so it is unlikely that a another pre-trained network (e.g. xception, vgg16) would yield significantly better results. Despite these potential biases (which bias other parameterisations of galaxy properties), the clustering _is_ successful at picking up features fundamental to the galaxy and demonstrates the viability of pre-trained CNN's uses in grouping galaxies. 
+
+Currently for most purposes, galaxies are divided very coarsely and 176 clusters (with minimal information about how they link together in some form of sequence) is difficult to use. At the most basic level, galaxies are divided into late-type (blue and flattened) and early-type (red and spherical) with a whole host of hierarchical (i.e. sub-catagories) within these very broad definitions. To understand this, agglomerative clustering is also implemented on the sample.
+
 
 ## Baseline comparison
 As a baseline test of image similarity clustering, we consider all pixel values (in each of the 3 colour channels) as distinct features (i.e. dimensions in the parameter space).
