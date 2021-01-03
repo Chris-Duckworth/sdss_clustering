@@ -24,7 +24,7 @@ In order to repurpose this network for the aim of clustering (rather than its or
 
 ## Principal Component Analysis 
 
-While these feature sets represent a host of different characteristics about the galaxy images, there are currently too higher dimension (at least for the 37632 output) to use as a parameter space for clustering. To effectively compress information (and hence reduce the number of dimensions), principal component analysis (PCA; [`sklearn.decomposition`](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.decomposition)) is applied to the CNN output. PCA works by fitting a series of n _principle components_ (i.e. set of orthogonal lines that can be defined as the directions that maximise the variance in the data [within the original parameter space]). PCA effectively identifies correlated dimensions, reducing the required number of parameters required to represent the data, while retaining maximal variance encapsulated by the original information. Our final feature sets (i.e. used for clustering can be summarised by the following table : 
+While these feature sets represent a host of different characteristics about the galaxy images, there are currently too higher dimension (at least for the 37632 output) to use as a parameter space for clustering. To effectively compress information (and hence reduce the number of dimensions), principal component analysis (PCA; [`sklearn.decomposition`](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.decomposition)) is applied to the CNN output. PCA works by fitting a series of n _principle components_ (i.e. set of orthogonal lines that can be defined as the directions that maximise the variance in the data [within the original parameter space]). PCA effectively identifies correlated dimensions, reducing the required number of parameters required to represent the data, while retaining maximal variance encapsulated by the original information. Our final feature sets (i.e. used for clustering) can be summarised by the following table : 
 
 | CNN n<sub>features</sub> | PCA n<sub>features</sub> | Original variance | Label |
 | ------------- | ------------- | ------------- | ------------- |
@@ -38,7 +38,7 @@ In the following, we will consider clustering applied to `CNN-37632_PCA-100`, ho
 ## Clustering 
 
 To cluster galaxy images, three distinct clustering algorithms (from [`sklearn.cluster`](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.cluster)) are applied to the output set of image features. We select :
-  - **k-means :** (i.e. generating a target number of distinct clusters that minimise within cluster variances)
+  - **k-means :** (i.e. generating a target number of distinct convex clusters that minimise within cluster variances)
   - **Affinity propagation :** which finds 'exemplars' (i.e. prime examples for a representative group) through sending 'messages' between each of the samples. Here you define groups (or their exemplars) to minimise a certain metric (e.g. average distance between samples in the parameter space or variance).
   - **Agglomerative :** hierarchical bottom-up clustering (i.e. iteratively merging together the nearest nodes - starting with individual galaxies until desired number of clusters are found)
 
