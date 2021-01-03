@@ -1,3 +1,5 @@
+![agglo](./transfer_learning/cluster_plots/agglomerative/CNN-37632_PCA-100/dendrogram-n16.png)
+
 # sdss_clustering
 
 Clustering of Sloan Digitial Sky Survey (SDSS) galaxy images (RGB) using transfer learning (from pre-trained convolutional neural networks), and/or principal component analysis, and, hierarchical (agglomerative) clustering.
@@ -50,6 +52,14 @@ A quick summary of their implementation (with jupyter notebook) can be found her
 | [Affinity propagation](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.AffinityPropagation.html#sklearn.cluster.AffinityPropagation) | 176 | [`affinity_propagation_CNN_clustering.ipynb`](./transfer_learning/affinity_propagation_CNN_clustering.ipynb) | **Damping** : 0.8 |
 | [Agglomerative](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.AgglomerativeClustering.html#sklearn.cluster.AgglomerativeClustering) | 32 | [`agglomerative_CNN_clustering.ipynb`](./transfer_learning/agglomerative_CNN_clustering.ipynb) | **Linkage** : 'ward' |
 
+## Evaluation
+Galaxy morphology (i.e. how a galaxy appears in an image), is correlated (to some degree; see [here](https://arxiv.org/abs/1608.00291) ) with intrinsic galaxy parameters such as spin and shape (i.e. is it round or disk-like). A basic test (outside of visually inspecting the images) is to consider how the defined clusters of galaxies, fall within the galaxy spin-shape parameter spaces (which are calculated independently). Using our basic k-means clustering with 10 clusters, we find : 
+
+![cluster](./transfer_learning/correlate_clusters/lambda_R_eps_kmeans_cluster.jpg)
+
+where λ<sub>R</sub> [introduced here](https://arxiv.org/abs/astro-ph/0703531) is a measure of _spin_ for a galaxy, by computing the light weighted average of ordered rotation divided by dispersion (random motion). Ellipticity is a measure of projected shape where ε = 1 - b/a (with a and b being the major and minor axes respectively). For each cluster (i.e. colour), the median value of the group is shown by the star, surrounded by a line enclosing 50% of the distribution. Individual points are shown by faint circles of the same colour. Corresponding image examples for each of the clusters are shown in the panel above the scatter plot.
+
+We can see that general the clusters defined here are reasonably compact within the parameter space. Given that galaxy spin/shape are not exactly correlated with morphology, this represents that the image clustering is returning reasonable results.
 
 ## Baseline comparison
 As a baseline test of image similarity clustering, we consider all pixel values (in each of the 3 colour channels) as distinct features (i.e. dimensions in the parameter space).
