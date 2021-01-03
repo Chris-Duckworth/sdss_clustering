@@ -28,21 +28,25 @@ While these feature sets represent a host of different characteristics about the
 
 | CNN n<sub>features</sub> | PCA n<sub>features</sub> | Original variance | Label |
 | ------------- | ------------- | ------------- | ------------- |
-| 37632 | 100 | 94.36% | `CNN-37632_PCA-100`|
+| 37632 | 100 | 94.36% | `CNN-37632_PCA-100` |
 | 128 | 20 | 99.86% | `CNN-128_PCA-20` |
 
+In the following, we will consider clustering applied to `CNN-37632_PCA-100`, however, in most cases we also include output from `CNN-128_PCA-20` in the corresponding directories. The relative importance (more strictly speaking _variance ratio_) of the principle components for `CNN-37632_PCA-100` are shown here :
+
+<img src="/transfer_learning/pca_variance_plots/pca_feature_variance-37632-100.png" width="450" height="300">
+
 ## Clustering
-
-
-As a baseline test of image similarity clustering, we first consider all pixel values (in each of the 3 colour channels) as distinct features (i.e. dimensions in the parameter space).
-Since we are working with images of size (80, 80, 3), this corresponds to 19200 dimensions which is difficult to cluster directly. 
-To compress information we apply a principal component analysis (pca) which transforms the parameter space, by considering a line orthogonal to the existing parameter dimensions, while minimising the distance of points from this line.
-This equates to find dimensions that have maximal variance along them, hence compressing information while retaining a significant fraction of variance in the data.
-Here, this can be thought of finding pixels that are highly correlated and linking them.
-
 
 ### K-means
 
 ### Affinity Propagation
 
 ### Agglomerative
+
+
+## Baseline comparison
+As a baseline test of image similarity clustering, we consider all pixel values (in each of the 3 colour channels) as distinct features (i.e. dimensions in the parameter space).
+Since we are working with images of size (80, 80, 3), this corresponds to 19200 dimensions which is difficult to cluster directly. 
+To compress information we apply a principal component analysis (pca) which transforms the parameter space, by considering a line orthogonal to the existing parameter dimensions, while minimising the distance of points from this line.
+This equates to find dimensions that have maximal variance along them, hence compressing information while retaining a significant fraction of variance in the data.
+Here, this can be thought of finding pixels that are highly correlated and linking them.
